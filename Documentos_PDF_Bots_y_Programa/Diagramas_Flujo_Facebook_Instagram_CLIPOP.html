@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagramas de Flujo Oficiales - Chatbots Facebook & Instagram CLIPOP</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f172a;
+      --primary-light: #1e293b;
+      --accent: #2563eb;
+      --accent-cyan: #06b6d4;
+      --gold: #f59e0b;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Header Ejecutivo */
+    .header {
+      background: linear-gradient(135deg, #0b132b 0%, #1c2541 60%, #3a506b 100%);
+      color: #ffffff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 35px -10px rgba(11, 19, 43, 0.3);
+      margin-bottom: 35px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      color: #67e8f9;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 50px;
+      margin-bottom: 15px;
+    }
+
+    .header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      max-width: 750px;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .meta-item {
+      font-size: 0.85rem;
+    }
+
+    .meta-item span {
+      display: block;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .meta-item strong {
+      color: #f8fafc;
+      font-weight: 600;
+    }
+
+    /* Cards de Secciones */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 35px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 25px;
+    }
+
+    .diagram-box {
+      background: #fafbfc;
+      border: 1px solid #eef2f6;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+
+    /* Tablas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #334155;
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 600;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    /* Highlights y Callouts */
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: #eff6ff;
+      padding: 18px 20px;
+      border-radius: 0 10px 10px 0;
+      margin: 20px 0;
+      font-size: 0.95rem;
+      color: #1e3a8a;
+    }
+
+    .callout-success {
+      border-left-color: #10b981;
+      background: #ecfdf5;
+      color: #065f46;
+    }
+
+    .print-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      z-index: 100;
+    }
+
+    .print-btn:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: white;
+      }
+
+      .print-btn {
+        display: none;
+      }
+
+      .section-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+        margin-bottom: 20px;
+        padding: 20px;
+      }
+
+      .header {
+        box-shadow: none;
+        page-break-after: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="print-btn" onclick="window.print()">
+    🖨️ Imprimir / Guardar en PDF
+  </button>
+
+  <div class="container">
+
+    <!-- HEADER -->
+    <header class="header">
+      <span class="badge">Documentación Oficial de Entrega</span>
+      <h1>Diagramas de Flujo: Chatbots Facebook & Instagram</h1>
+      <p>Especificación visual y lógica de interacción para los bots de Facebook Messenger e Instagram Direct de CLIPOP,
+        integrados con Meta Graph API v20.0 y el orquestador de Inteligencia Artificial.</p>
+
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span>Empresa</span>
+          <strong>CLIPOP Oficial</strong>
+        </div>
+        <div class="meta-item">
+          <span>Director General</span>
+          <strong>Ing. Francisco R. Gardea</strong>
+        </div>
+        <div class="meta-item">
+          <span>Ecosistema</span>
+          <strong>Meta Cloud / Graph API</strong>
+        </div>
+        <div class="meta-item">
+          <span>Fecha de Entrega</span>
+          <strong>Septiembre 2026</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECCIÓN 1: FACEBOOK MESSENGER -->
+    <section class="section-card">
+      <h2 class="section-title">
+        <span>🔵</span> 1. Diagrama de Flujo: Facebook Messenger (Fanpage)
+      </h2>
+      <p class="section-subtitle">
+        Diseñado bajo la estructura de <b>Carrusel Interactivo (Generic Template)</b> y botones rápidos. Cumple
+        estrictamente con la política de Meta para evitar bloqueos y bucles automáticos cerrados.
+      </p>
+
+      <div class="diagram-box">
+        <pre class="mermaid">
+flowchart TD
+    A["🔵 Disparador: Clic en 'Empezar' o Mensaje Orgánico"] --> B["🤖 Saludo de Nikola con Menú Principal"]
+    
+    B --> C1["1️⃣ Cursos Pregrabados"]
+    B --> C2["2️⃣ Cursos Teams en Vivo"]
+    B --> C3["3️⃣ Cursos Presenciales HMO"]
+    B --> C4["4️⃣ Cotizar Proyecto"]
+    B --> C5["👨‍💼 Hablar con Asesor"]
+    B --> C6["❓ Pregunta Técnica Libre"]
+
+    C1 --> D1["📚 Carrusel: Curso Precios Unitarios CFE + OPUS/Neodata<br/>• Botón URL: Hotmart<br/>• Botón URL: Catálogo Web"]
+    C2 --> D2["💻 Convocatorias Teams en redes oficiales<br/>• Correo corporativo: contacto@clipop.com.mx"]
+    C3 --> D3["📍 Cursos en Hermosillo, Sonora<br/>• Sedes y calendario en redes"]
+    C4 --> D4["⚡ Envío de catálogo de conceptos, planos y especificaciones<br/>• Correo: contacto@clipop.com.mx"]
+    
+    C5 --> D5["👨‍💼 Pausa de Bot (bot_paused = true)<br/>• Notificación inmediata al Ing. Francisco<br/>• Atención humana directa"]
+    
+    C6 --> D6{"¿Coincide con Regla?"}
+    D6 -- Sí --> D6A["Respuesta fija parametrizada"]
+    D6 -- No --> D6B["Google Gemini 1.5 Flash (System Prompt CLIPOP)"]
+
+    D1 --> RET["🔄 Botón: '0' Menú Principal / 'SÍ' o 'NO'"]
+    D2 --> RET
+    D3 --> RET
+    D4 --> RET
+    D6A --> RET
+    D6B --> RET
+
+    RET -- "Menú o '0'" --> B
+    RET -- "'NO' / Fin" --> FIN["✨ '¡Muchas gracias por contactarnos!'"]
+        </pre>
+      </div>
+
+      <div class="callout">
+        <b>Regla de Aprobación de Meta:</b> Cada nodo de respuesta incluye llamadas a la acción claras (CTA) y siempre
+        permite al usuario escribir <b>"0"</b> o pulsar <b>"Menú"</b> para retornar de manera limpia a la raíz.
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: INSTAGRAM DIRECT -->
+    <section class="section-card">
+      <h2 class="section-title">
+        <span>📸</span> 2. Diagrama de Flujo: Instagram Direct (Meta Direct API)
+      </h2>
+      <p class="section-subtitle">
+        Optimizado para la navegación móvil con <b>Quick Replies deslizables</b> de un solo toque y respuesta a
+        interacciones nativas como respuestas a historias y menciones.
+      </p>
+
+      <div class="diagram-box">
+        <pre class="mermaid">
+flowchart TD
+    IG_IN["📸 Disparadores: DM / Story Reply / Mención @clipopoficial / Reel"] --> IG_MEN["💬 Saludo Ágil Nikola (Instagram DM)"]
+
+    IG_MEN --> Q1["🎓 Cursos Online"]
+    IG_MEN --> Q2["💻 Teams en Vivo"]
+    IG_MEN --> Q3["📍 Presencial HMO"]
+    IG_MEN --> Q4["⚡ Cotizar Obra"]
+    IG_MEN --> Q5["👨‍💼 Asesor Humano"]
+
+    Q1 --> R1["Tarjeta 1:1 con Enlace a Hotmart + Catálogo Web"]
+    Q2 --> R2["Fechas publicadas en Stories destacadas + contacto@clipop.com.mx"]
+    Q3 --> R3["Convocatorias abiertas en Hermosillo + correo para foráneos"]
+    Q4 --> R4["Requisitos de licitación y envío de catálogo a contacto@clipop.com.mx"]
+    Q5 --> R5["Bot en Pausa + Notificación + Traspaso a Bandeja Principal IG"]
+
+    R1 --> LOOP["🔘 Quick Reply: '🏠 Menú' | '👍 Otra duda' | '👋 Salir'"]
+    R2 --> LOOP
+    R3 --> LOOP
+    R4 --> LOOP
+
+    LOOP -- "🏠 Menú" --> IG_MEN
+    LOOP -- "👋 Salir" --> BYE["✨ Sesión concluida cordialmente"]
+        </pre>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: ARQUITECTURA TÉCNICA -->
+    <section class="section-card">
+      <h2 class="section-title">
+        <span>⚙️</span> 3. Arquitectura del Webhook Unificado de Meta
+      </h2>
+      <p class="section-subtitle">
+        Flujo de datos síncrono/asíncrono en Node.js Express, Base de Datos PostgreSQL y API Graph de Meta.
+      </p>
+
+      <div class="diagram-box">
+        <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Cliente as Usuario (FB / IG)
+    participant Meta as Meta Graph API
+    participant Webhook as CLIPOP /api/webhooks/meta
+    participant Dedup as Caché TTL (Anti-duplicados)
+    participant DB as PostgreSQL (Prisma CRM)
+    participant Agent as agentCore.js + Gemini 1.5
+
+    Cliente->>Meta: Envía mensaje o toca botón
+    Meta->>Webhook: POST Webhook (messaging event)
+    
+    Note over Webhook,Meta: Cumplimiento de SLA: Responde en menos de 500 ms
+    Webhook-->>Meta: HTTP 200 "EVENT_RECEIVED"
+
+    Webhook->>Dedup: Verificar mid (Message ID)
+    alt Es Duplicado
+        Dedup-->>Webhook: Ignorar (Evita mensajes dobles)
+    else Es Nuevo
+        Dedup->>DB: Registrar Lead y Mensaje Entrante
+        alt Bot Pausado (bot_paused = true)
+            DB-->>Webhook: Pausado para Asesor Humano (No responder)
+        else Bot Activo
+            Webhook->>Agent: Evaluar mensaje / Payload
+            Agent->>Agent: adaptLinksForPlatform()
+            Agent->>DB: Registrar respuesta enviada
+            Agent->>Meta: POST /v20.0/me/messages (Send API)
+            Meta->>Cliente: Entrega respuesta inmediata
+        end
+    end
+        </pre>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: MATRIZ DE COMPARACIÓN -->
+    <section class="section-card">
+      <h2 class="section-title">
+        <span>📊</span> 4. Matriz Comparativa de Capacidades Técnicas
+      </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Característica</th>
+            <th>🔵 Facebook Messenger</th>
+            <th>📸 Instagram Direct</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Identificador Único</strong></td>
+            <td>PSID (Page-Scoped ID)</td>
+            <td>IGSID (Instagram-Scoped ID)</td>
+          </tr>
+          <tr>
+            <td><strong>Componentes de UI</strong></td>
+            <td>Carrusel de Tarjetas (Generic Template) + Botones Web</td>
+            <td>Quick Replies horizontales + Tarjetas 1:1</td>
+          </tr>
+          <tr>
+            <td><strong>Triggers Nativos</strong></td>
+            <td>Botón "Empezar", Anuncios Click-to-Messenger</td>
+            <td>Story Replies, Menciones (@clipopoficial), Reels</td>
+          </tr>
+          <tr>
+            <td><strong>Traspaso a Humano</strong></td>
+            <td>Silencia bot + Bandeja Meta Business Suite</td>
+            <td>Silencia bot + Bandeja Principal de Instagram</td>
+          </tr>
+          <tr>
+            <td><strong>Lógica de Enlaces</strong></td>
+            <td>Excluye enlaces a Facebook (evita redundancia)</td>
+            <td>Excluye enlaces a Instagram (evita redundancia)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
+  </script>
+</body>
+
+</html>

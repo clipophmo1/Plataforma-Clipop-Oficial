@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía de Construcción y Diagramas ManyChat - Facebook e Instagram CLIPOP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0a1128;
+      --primary-light: #1c2541;
+      --accent-blue: #0066ff;
+      --accent-cyan: #00b4d8;
+      --accent-purple: #7928ca;
+      --accent-gold: #f59e0b;
+      --accent-green: #10b981;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #cbd5e1;
+      --mc-blue: #0084ff;
+      --mc-ig: #d62976;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 30px;
+      font-size: 13.5px;
+    }
+
+    .page-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* Portada */
+    .cover {
+      background: linear-gradient(135deg, #070d1e 0%, #0f1c3f 50%, #1e3a8a 100%);
+      color: #ffffff;
+      padding: 50px 45px;
+      border-radius: 20px;
+      margin-bottom: 35px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px -15px rgba(10, 17, 40, 0.4);
+      page-break-after: always;
+    }
+
+    .cover::after {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(0, 180, 216, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .badge-mc {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 180, 216, 0.15);
+      border: 1px solid rgba(0, 180, 216, 0.4);
+      color: #67e8f9;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .cover h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .cover h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 500;
+      color: #93c5fd;
+      margin-bottom: 20px;
+    }
+
+    .cover p {
+      color: #cbd5e1;
+      font-size: 1.05rem;
+      max-width: 800px;
+      margin-bottom: 30px;
+    }
+
+    .meta-table {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      padding-top: 25px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .meta-box span {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .meta-box strong {
+      font-size: 0.95rem;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    /* Secciones */
+    .section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 35px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+      page-break-inside: avoid;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #f1f5f9;
+    }
+
+    .section-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .icon-fb { background: #e0f2fe; color: #0284c7; }
+    .icon-ig { background: #fce7f3; color: #db2777; }
+    .icon-mc { background: #dbeafe; color: #1d4ed8; }
+    .icon-gear { background: #fef3c7; color: #d97706; }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    /* Diagrama ManyChat Visual en Cajas */
+    .flow-diagram-container {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 25px;
+      margin: 20px 0;
+    }
+
+    .flow-node-step {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .step-content {
+      flex: 1;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    }
+
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .step-badge {
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-trigger { background: #dcfce7; color: #15803d; }
+    .badge-message { background: #e0f2fe; color: #0369a1; }
+    .badge-action { background: #fae8ff; color: #86198f; }
+    .badge-card { background: #fef9c3; color: #854d0e; }
+
+    /* ManyChat Block Simulator */
+    .mc-block {
+      background: #ffffff;
+      border: 2px solid #0084ff;
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 15px 0;
+      box-shadow: 0 6px 12px rgba(0, 132, 255, 0.08);
+    }
+
+    .mc-block-header {
+      background: #0084ff;
+      color: white;
+      padding: 8px 16px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mc-block-body {
+      padding: 18px;
+    }
+
+    .mc-text-preview {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      color: #1e293b;
+      white-space: pre-wrap;
+      margin-bottom: 14px;
+      border-left: 3px solid #0084ff;
+    }
+
+    .mc-buttons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mc-btn-item {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0084ff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .mc-btn-type {
+      font-size: 0.72rem;
+      color: #64748b;
+      font-weight: 400;
+      background: #f8fafc;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    /* Instagram Quick Replies */
+    .ig-qr-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .ig-qr-pill {
+      background: #fdf2f8;
+      border: 1px solid #f472b6;
+      color: #be185d;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Tabla de Mapeo ManyChat */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: #0f172a;
+      color: white;
+      padding: 10px 14px;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    /* Code Snippets */
+    code, .code-snippet {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .callout-box {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      padding: 14px 18px;
+      border-radius: 0 10px 10px 0;
+      margin: 15px 0;
+      font-size: 0.88rem;
+      color: #1e3a8a;
+    }
+
+    .callout-box strong {
+      color: #1e40af;
+    }
+
+    .callout-warning {
+      background: #fffbeb;
+      border-left-color: #f59e0b;
+      color: #92400e;
+    }
+
+    .callout-success {
+      background: #ecfdf5;
+      border-left-color: #10b981;
+      color: #065f46;
+    }
+
+    /* Modo de Impresión y Salto de Página */
+    @media print {
+      body {
+        padding: 0;
+        background: white;
+      }
+      .page-container {
+        max-width: 100%;
+      }
+      .cover {
+        box-shadow: none;
+        page-break-after: always;
+        padding: 35px;
+      }
+      .section {
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        margin-bottom: 25px;
+        page-break-inside: avoid;
+        padding: 25px;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-container">
+
+    <!-- PORTADA EJECUTIVA -->
+    <div class="cover">
+      <div class="badge-mc">
+        ⚡ Especificación Oficial de Implementación en ManyChat
+      </div>
+      <h1>CLIPOP INGENIERÍA</h1>
+      <h2>Manual de Flujos, Diagramas y Bloques de ManyChat para Facebook Messenger e Instagram Direct</h2>
+      <p>
+        Guía maestra lista para replicar paso a paso dentro del constructor de flujos de <b>ManyChat (Flow Builder)</b>, con textos exactos de copywriting, configuración de botones, carruseles de tarjetas, acciones de Live Chat y cumplimiento estricto con las políticas de Meta 2026.
+      </p>
+
+      <div class="meta-table">
+        <div class="meta-box">
+          <span>Organización</span>
+          <strong>CLIPOP Oficial</strong>
+        </div>
+        <div class="meta-box">
+          <span>Director General</span>
+          <strong>Ing. Francisco Gardea</strong>
+        </div>
+        <div class="meta-box">
+          <span>Constructor</span>
+          <strong>ManyChat Automation</strong>
+        </div>
+        <div class="meta-box">
+          <span>Versión</span>
+          <strong>Meta API v20.0 (2026)</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 1: ARQUITECTURA GENERAL EN MANYCHAT -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-mc">🧩</div>
+        <div>
+          <h3 class="section-title">1. Resumen de la Estructura en ManyChat</h3>
+          <p class="section-desc">Cómo organizar las carpetas y flujos dentro de ManyChat para mantener un sistema ordenado y profesional.</p>
+        </div>
+      </div>
+
+      <p>En el panel de ManyChat, recomendamos crear una carpeta llamada <b><code>[CLIPOP] Chatbots Oficiales</code></b> con dos flujos principales y un flujo de Live Chat:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre del Flujo en ManyChat</th>
+            <th>Canal</th>
+            <th>Disparadores (Triggers)</th>
+            <th>Objetivo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>FB - Menú Principal y Cursos</strong></td>
+            <td>🔵 Facebook Messenger</td>
+            <td>Get Started, Palabras clave (Hola, Menu, 0, Cursos, Precios)</td>
+            <td>Presentar catálogo en Carrusel, links directos a Hotmart y contacto.</td>
+          </tr>
+          <tr>
+            <td><strong>IG - Direct Experience</strong></td>
+            <td>📸 Instagram Direct</td>
+            <td>DM directo, Respuesta a Story, Mención de Story (@clipopoficial)</td>
+            <td>Experiencia ágil con Quick Replies y respuesta en 1 toque.</td>
+          </tr>
+          <tr>
+            <td><strong>GLOBAL - Asesor Humano (Handover)</strong></td>
+            <td>🔵 FB + 📸 IG</td>
+            <td>Botón "Hablar con Asesor", Palabras (asesor, humano, operador)</td>
+            <td>Pausar automatización, notificar al Ing. Francisco y abrir Live Chat.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout-box">
+        <strong>💡 Regla de Oro en ManyChat:</strong> Configura siempre un botón o quick reply <b>"🏠 Menú Principal"</b> al final de cada nodo de respuesta. Esto evita que el prospecto quede varado y garantiza la aprobación sin observaciones de Meta.
+      </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- MÓDULO 2: CONSTRUCCIÓN EN MANYCHAT PARA FACEBOOK MESSENGER -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-fb">🔵</div>
+        <div>
+          <h3 class="section-title">2. Flujo Paso a Paso: Facebook Messenger</h3>
+          <p class="section-desc">Configuración visual nodo por nodo en el Flow Builder de ManyChat.</p>
+        </div>
+      </div>
+
+      <!-- PASO 1 -->
+      <div class="flow-node-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">
+            <span>Paso Inicial: Disparadores (Starting Step)</span>
+            <span class="step-badge badge-trigger">Trigger</span>
+          </div>
+          <p>En ManyChat, crea un <b>Starting Step</b> con los siguientes disparadores activados:</p>
+          <ul style="margin: 8px 0 8px 20px;">
+            <li><b>Facebook Get Started</b> (Cuando el usuario presiona el botón "Empezar").</li>
+            <li><b>Keywords</b> (Coincidencia exacta o frase): <code>hola</code>, <code>menu</code>, <code>menú</code>, <code>0</code>, <code>inicio</code>, <code>cursos</code>, <code>informes</code>.</li>
+            <li><b>Messenger Referral URL</b> (Para anuncios de Facebook que apunten al bot).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="flow-node-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">
+            <span>Nodo 1: Mensaje de Bienvenida y Menú Principal</span>
+            <span class="step-badge badge-message">Send Message</span>
+          </div>
+
+          <div class="mc-block">
+            <div class="mc-block-header">
+              <span>🔵 Messenger • Bloque: [FB] Welcome Menu</span>
+              <span>Content Type: Other</span>
+            </div>
+            <div class="mc-block-body">
+              <div class="mc-text-preview">¡Hola, {{first_name}}! Soy Nikola, tu asistente de CLIPOP (Ingeniería de Costos y Licitaciones). 🤝⚡
+
+¿En cuál de nuestros servicios te gustaría recibir información?
+
+1️⃣ Cursos pregrabados (OPUS y Neodata)
+2️⃣ Cursos en tiempo real por Teams
+3️⃣ Cursos presenciales (Hermosillo)
+4️⃣ Cotización de proyectos de obra</div>
+              
+              <div class="mc-buttons-list">
+                <div class="mc-btn-item">
+                  <span>🎓 1. Cursos Pregrabados</span>
+                  <span class="mc-btn-type">Go to Step: [FB] Carrusel Cursos</span>
+                </div>
+                <div class="mc-btn-item">
+                  <span>💻 2. Teams en Vivo</span>
+                  <span class="mc-btn-type">Go to Step: [FB] Info Teams</span>
+                </div>
+                <div class="mc-btn-item">
+                  <span>📍 3. Presencial HMO</span>
+                  <span class="mc-btn-type">Go to Step: [FB] Info Presencial</span>
+                </div>
+              </div>
+
+              <!-- Quick replies complementarios -->
+              <div style="margin-top: 12px;">
+                <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">QUICK REPLIES ADICIONALES (Opcional):</span>
+                <div class="ig-qr-container">
+                  <span class="ig-qr-pill" style="border-color:#0084ff; color:#0084ff; background:#eff6ff;">⚡ Cotizar Proyecto</span>
+                  <span class="ig-qr-pill" style="border-color:#10b981; color:#065f46; background:#ecfdf5;">👨‍💼 Hablar con Asesor</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="flow-node-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">
+            <span>Nodo 2: Carrusel de Cursos (Generic Template)</span>
+            <span class="step-badge badge-card">Card Carousel</span>
+          </div>
+          <p>ManyChat permite crear un <b>Gallery / Carousel</b> con imágenes, títulos y botones de compra directa:</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;">
+            <!-- Tarjeta 1 -->
+            <div style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; background: white;">
+              <span style="font-size: 0.7rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">Tarjeta 1 (Curso Estrella)</span>
+              <h4 style="font-size: 0.95rem; margin: 6px 0;">Precios Unitarios CFE + OPUS</h4>
+              <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">¡Incluye acceso sin costo extra a OPUS 22, 24, Neodata y Concursos CFE!</p>
+              <div class="mc-buttons-list">
+                <div class="mc-btn-item" style="padding: 6px 10px; font-size: 0.8rem;">
+                  <span>🛒 Comprar en Hotmart</span>
+                  <span class="mc-btn-type">URL: https://go.hotmart.com/K93054265G</span>
+                </div>
+                <div class="mc-btn-item" style="padding: 6px 10px; font-size: 0.8rem;">
+                  <span>🌐 Ver Catálogo Web</span>
+                  <span class="mc-btn-type">URL: https://clipop.com.mx/cursos</span>
+                </div>
+                <div class="mc-btn-item" style="padding: 6px 10px; font-size: 0.8rem;">
+                  <span>🏠 Menú Principal</span>
+                  <span class="mc-btn-type">Go to Step: [FB] Welcome Menu</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tarjeta 2 -->
+            <div style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; background: white;">
+              <span style="font-size: 0.7rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">Tarjeta 2 (Curso Gratuito)</span>
+              <h4 style="font-size: 0.95rem; margin: 6px 0;">Introducción a Precios Unitarios</h4>
+              <p style="font-size: 0.8rem; color: #64748b; margin-bottom: 10px;">Conoce nuestra metodología con nuestro curso introductorio 100% gratuito.</p>
+              <div class="mc-buttons-list">
+                <div class="mc-btn-item" style="padding: 6px 10px; font-size: 0.8rem;">
+                  <span>🎁 Tomar Curso Gratis</span>
+                  <span class="mc-btn-type">URL: https://www.udemy.com/course/analisis-de-precios-unitarios-gratis/?referralCode=F897FBB286B09C70CCED</span>
+                </div>
+                <div class="mc-btn-item" style="padding: 6px 10px; font-size: 0.8rem;">
+                  <span>📧 Dudas por Correo</span>
+                  <span class="mc-btn-type">contacto@clipop.com.mx</span>
+                </div>
+                <div class="mc-btn-item" style="padding: 6px 10px; font-size: 0.8rem;">
+                  <span>🏠 Menú Principal</span>
+                  <span class="mc-btn-type">Go to Step: [FB] Welcome Menu</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 4: OTRAS RAMAS -->
+      <div class="flow-node-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <div class="step-title">
+            <span>Nodos 3, 4 y 5: Teams, Presencial y Cotización</span>
+            <span class="step-badge badge-message">Send Message</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;">
+              <strong style="color: #0369a1; font-size: 0.85rem;">Nodo Teams en Vivo:</strong>
+              <p style="font-size: 0.78rem; margin: 6px 0; color: #475569;">Informa sobre convocatorias en redes sociales y programación para empresas a contacto@clipop.com.mx. Botón a Web y Botón a Menú.</p>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;">
+              <strong style="color: #0369a1; font-size: 0.85rem;">Nodo Presenciales HMO:</strong>
+              <p style="font-size: 0.78rem; margin: 6px 0; color: #475569;">Cursos impartidos en Hermosillo, Sonora. Convocatorias en redes y correo para sedes en otras ciudades. Botón a Menú.</p>
+            </div>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px;">
+              <strong style="color: #0369a1; font-size: 0.85rem;">Nodo Cotización Obra:</strong>
+              <p style="font-size: 0.78rem; margin: 6px 0; color: #475569;">Solicitud de catálogo de conceptos, planos y especificaciones con asunto 'Solicitud de cotización'. Botón a Menú.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- MÓDULO 3: CONSTRUCCIÓN EN MANYCHAT PARA INSTAGRAM DIRECT -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-ig">📸</div>
+        <div>
+          <h3 class="section-title">3. Flujo Paso a Paso: Instagram Direct</h3>
+          <p class="section-desc">Estructurado específicamente para el comportamiento táctil de la aplicación móvil de Instagram.</p>
+        </div>
+      </div>
+
+      <div class="flow-node-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <div class="step-title">
+            <span>Disparadores Nativos de Instagram en ManyChat</span>
+            <span class="step-badge badge-trigger">IG Triggers</span>
+          </div>
+          <p>Configura en ManyChat los 4 triggers esenciales de Instagram:</p>
+          <ul style="margin: 8px 0 8px 20px;">
+            <li><b>Instagram Direct Message:</b> Mensajes entrantes con palabras <code>hola</code>, <code>info</code>, <code>precio</code>, <code>curso</code>, <code>menu</code>.</li>
+            <li><b>Instagram Story Reply:</b> Cuando un prospecto responde a cualquier historia activa.</li>
+            <li><b>Instagram User Story Mention:</b> Cuando alguien menciona a <code>@clipopoficial</code> en una historia (¡Genera un agradecimiento automático + Menú!).</li>
+            <li><b>Instagram Comments Automation:</b> Cuando comentan palabras como <code>CURSO</code> en Reels o Posts, ManyChat envía un DM en automático.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="flow-node-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <div class="step-title">
+            <span>Nodo Instagram: Saludo y Quick Replies Deslizables</span>
+            <span class="step-badge badge-message">IG Quick Replies</span>
+          </div>
+
+          <div class="mc-block" style="border-color: #db2777;">
+            <div class="mc-block-header" style="background: linear-gradient(90deg, #d62976, #fa7e1e);">
+              <span>📸 Instagram • Bloque: [IG] Welcome Quick Replies</span>
+              <span>Enfoque Móvil</span>
+            </div>
+            <div class="mc-block-body">
+              <div class="mc-text-preview" style="border-left-color: #db2777;">¡Hola, {{first_name}}! 👋 Qué gusto saludarte en Instagram.
+
+Soy Nikola, asistente virtual de CLIPOP (Ingeniería de Costos y Licitaciones). 
+
+Toca una opción para darte información de inmediato: 👇</div>
+
+              <span style="font-size: 0.78rem; font-weight: 700; color: #db2777;">CONFIGURACIÓN DE QUICK REPLIES HORIZONTALES (MANYCHAT):</span>
+              
+              <div class="ig-qr-container" style="margin-top: 8px;">
+                <div class="ig-qr-pill">🎓 Cursos Online ➡️ [IG] Tarjeta Cursos</div>
+                <div class="ig-qr-pill">💻 Teams en Vivo ➡️ [IG] Info Teams</div>
+                <div class="ig-qr-pill">📍 Presencial HMO ➡️ [IG] Info HMO</div>
+                <div class="ig-qr-pill">⚡ Cotizar Proyecto ➡️ [IG] Info Cotizar</div>
+                <div class="ig-qr-pill">👨‍💼 Hablar con Asesor ➡️ [GLOBAL] Live Chat</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-node-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <div class="step-title">
+            <span>Visualización de Cursos en Instagram (Aspect Ratio 1:1)</span>
+            <span class="step-badge badge-card">Square Card</span>
+          </div>
+          <p>A diferencia de Facebook (1.91:1), en Instagram ManyChat recomienda usar proporción <b>Cuadrada (1:1)</b> para aprovechar toda la pantalla vertical del smartphone.</p>
+
+          <div class="callout-box callout-success">
+            <strong>✅ Optimización de Enlaces en Instagram:</strong> No incluyas enlaces que digan "Visita nuestro Instagram" dentro de los mensajes de Instagram. El backend y ManyChat ya filtran esto para evitar redundancia y lucir 100% profesional.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- MÓDULO 4: LIVE CHAT Y HANDOVER A ASESOR HUMANO -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-gear">👨‍💼</div>
+        <div>
+          <h3 class="section-title">4. Configuración del Traspaso a Asesor Humano (Live Chat)</h3>
+          <p class="section-desc">Cómo configurar el bloque para silenciar el bot y notificar al Ing. Francisco Gardea.</p>
+        </div>
+      </div>
+
+      <p>Cuando el usuario pulsa <b>"👨‍💼 Hablar con Asesor"</b> o escribe <i>"quiero hablar con una persona"</i>, ManyChat debe ejecutar esta secuencia de acciones:</p>
+
+      <div style="background: #f1f5f9; border-radius: 12px; padding: 20px; margin: 15px 0;">
+        
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <span class="step-badge badge-action">Acción 1 ManyChat</span>
+          <strong>Mark Conversation as Open</strong> (Abre el chat en la bandeja de entrada para atención humana).
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <span class="step-badge badge-action">Acción 2 ManyChat</span>
+          <strong>Pause Automation</strong> (Pausa el bot para este usuario durante 24 horas o hasta que el asesor lo cierre).
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <span class="step-badge badge-action">Acción 3 ManyChat</span>
+          <strong>Notify Admins</strong> (Envía notificación a la app móvil de ManyChat / Correo de Francisco Gardea).
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="step-badge badge-message">Mensaje al Cliente</span>
+          <span>Envía el mensaje de confirmación de transferencia:</span>
+        </div>
+
+        <div class="mc-text-preview" style="margin-top: 10px; margin-bottom: 0;">👨‍💼 *Atención con un Asesor de CLIPOP*
+
+¡Perfecto, {{first_name}}! Hemos notificado a nuestro equipo. Un asesor humano tomará el control de esta conversación a la brevedad posible.
+
+✉️ Correo: contacto@clipop.com.mx
+🌐 Web: https://clipop.com.mx
+
+(Si deseas regresar al menú automático en cualquier momento, solo escribe "Menú" o "0").</div>
+      </div>
+    </div>
+
+    <!-- MÓDULO 5: CHECKLIST DE APROBACIÓN DE META APP REVIEW -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon icon-mc">🛡️</div>
+        <div>
+          <h3 class="section-title">5. Checklist para Entrega y Aprobación de Meta</h3>
+          <p class="section-desc">Requisitos indispensables para no tener rechazos de Meta ni de los clientes.</p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Requisito de Meta</th>
+            <th>Cómo lo cumple este diseño</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Regla de las 24 horas</strong></td>
+            <td>Todos los mensajes de ManyChat son respuestas a interacciones iniciadas por el usuario.</td>
+            <td>✅ Cumplido</td>
+          </tr>
+          <tr>
+            <td><strong>Salida voluntaria (Anti-bucle)</strong></td>
+            <td>No hay preguntas obligatorias de SÍ/NO. El usuario siempre puede presionar "0" o "Menú".</td>
+            <td>✅ Cumplido</td>
+          </tr>
+          <tr>
+            <td><strong>Opción a Humano</strong></td>
+            <td>Botón "Hablar con Asesor" visible en el menú principal y en las opciones de continuidad.</td>
+            <td>✅ Cumplido</td>
+          </tr>
+          <tr>
+            <td><strong>Límite de caracteres en botones</strong></td>
+            <td>Los títulos de los botones en Messenger no superan los 20 caracteres (Ej: <code>🎓 Cursos Online</code>).</td>
+            <td>✅ Cumplido</td>
+          </tr>
+          <tr>
+            <td><strong>Políticas de Privacidad</strong></td>
+            <td>Enlace al sitio web oficial <code>https://clipop.com.mx</code> disponible en los menús.</td>
+            <td>✅ Cumplido</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout-box callout-success">
+        <strong>🚀 Conclusión de Entrega:</strong> Siguiendo este documento, cualquier operador o implementador puede entrar a ManyChat y dar de alta los flujos en menos de 30 minutos, con la seguridad de que cuenta con la aprobación técnica y comercial de CLIPOP.
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
