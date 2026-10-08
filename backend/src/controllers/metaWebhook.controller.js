@@ -90,6 +90,10 @@ function handleIncomingEvent(req, res) {
       let mid = '';
 
       if (webhookEvent.message) {
+        // Ignorar ecos de mensajes enviados por la propia página o bots
+        if (webhookEvent.message.is_echo) {
+          return;
+        }
         mid = webhookEvent.message.mid;
         text = webhookEvent.message.quick_reply?.payload || webhookEvent.message.text || '';
       } else if (webhookEvent.postback) {
@@ -132,6 +136,9 @@ async function processMetaMessageAsync({ senderPsid, text, platform, senderName 
     } catch (e) {}
   }
 
+  // Limpiar temporizadores de inactividad previos al recibir un nuevo mensaje
+  clearMetaInactivityTimers(senderPsid);
+
   // Registrar mensaje entrante en BD y Memoria garantizada
   const lead = await recordIncomingLeadMessage({
     platform: effectivePlatform,
@@ -173,10 +180,63 @@ async function processMetaMessageAsync({ senderPsid, text, platform, senderName 
     console.log(`[Meta Agent Response] Enviando respuesta a ${senderPsid} (${effectivePlatform}): "${agentResponse.text.substring(0, 60)}..."`);
     await sendMetaGraphMessage(senderPsid, agentResponse.text, effectivePlatform);
     await recordAiResponseMessage({ phoneOrId: senderPsid, text: agentResponse.text });
+
+    // Programar seguimiento por inactividad solo si no es despedida ('no') ni traspaso a asesor
+    const isDespedida = cleanText === 'no' || /^(no|no gracias|ninguna|adios|bye)$/i.test(cleanText);
+    const isAsesor = cleanText.includes('asesor') || cleanText.includes('humano');
+    if (!isDespedida && !isAsesor) {
+      scheduleMetaInactivityTimers(senderPsid, senderName, effectivePlatform);
+    }
   }
+}
+
+// --- GESTIÓN DE INACTIVIDAD DE CHAT EN META (Facebook Messenger / Instagram) ---
+const metaInactivitySessions = new Map();
+
+function clearMetaInactivityTimers(senderPsid) {
+  if (metaInactivitySessions.has(senderPsid)) {
+    const session = metaInactivitySessions.get(senderPsid);
+    if (session.nudgeTimer) clearTimeout(session.nudgeTimer);
+    if (session.closeTimer) clearTimeout(session.closeTimer);
+    metaInactivitySessions.delete(senderPsid);
+  }
+}
+
+function scheduleMetaInactivityTimers(senderPsid, senderName = '', platform = 'messenger') {
+  clearMetaInactivityTimers(senderPsid);
+
+  // 1. Mensaje de seguimiento tras 2.5 minutos de inactividad (150,000 ms)
+  const nudgeTimer = setTimeout(async () => {
+    try {
+      const nameGreeting = senderName ? ` ${senderName}` : '';
+      const nudgeMsg = `⏰ *Hola${nameGreeting}*, ¿sigues por ahí? 🤔\n\n❓ *¿Deseas continuar con la conversación?*\n👉 *Opciones:* *'SÍ'* o *'NO'*\n\n✉️ Recuerda que también puedes enviar tus dudas o documentos a: *contacto@clipop.com.mx*\n\n💡 _O escribe *0* o *'Menú'* para volver al menú principal._`;
+      console.log(`[Meta Inactividad] Enviando recordatorio a ${senderPsid} (${platform})`);
+      await sendMetaGraphMessage(senderPsid, nudgeMsg, platform);
+      await recordAiResponseMessage({ phoneOrId: senderPsid, text: nudgeMsg });
+    } catch (err) {
+      console.error('[Meta Nudge Error]', err);
+    }
+  }, 150000); // 2.5 minutos
+
+  // 2. Mensaje de cierre tras 5 minutos de inactividad total (300,000 ms)
+  const closeTimer = setTimeout(async () => {
+    try {
+      const closeMsg = `🔒 *Sesión finalizada por inactividad*\n\nHemos dado por finalizada esta sesión. Puedes volver a escribirnos en cualquier momento para ver las opciones enviando *'Menú'* o *'0'*. ¡Mucho éxito en tus proyectos! 👋✨\n\n━━━━━━━━━━━━━━━━━━━\n🌐 *Sitio Web:* https://clipop.com.mx\n📸 *Instagram:* https://instagram.com/clipopoficial\n✉️ *Correo:* contacto@clipop.com.mx\n━━━━━━━━━━━━━━━━━━━`;
+      console.log(`[Meta Inactividad] Cerrando sesión por inactividad para ${senderPsid} (${platform})`);
+      await sendMetaGraphMessage(senderPsid, closeMsg, platform);
+      await recordAiResponseMessage({ phoneOrId: senderPsid, text: closeMsg });
+      metaInactivitySessions.delete(senderPsid);
+    } catch (err) {
+      console.error('[Meta Close Error]', err);
+    }
+  }, 300000); // 5 minutos
+
+  metaInactivitySessions.set(senderPsid, { nudgeTimer, closeTimer, lastActivity: Date.now() });
 }
 
 module.exports = {
   verifyWebhook,
-  handleIncomingEvent
+  handleIncomingEvent,
+  clearMetaInactivityTimers,
+  scheduleMetaInactivityTimers
 };
