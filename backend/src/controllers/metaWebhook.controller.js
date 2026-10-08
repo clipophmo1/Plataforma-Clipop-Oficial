@@ -82,38 +82,40 @@ function handleIncomingEvent(req, res) {
   // B. Eventos de Messenger y Facebook Page
   if (body.object === 'page' || body.object === 'instagram') {
     (body.entry || []).forEach(entry => {
-      const webhookEvent = entry.messaging ? entry.messaging[0] : null;
-      if (!webhookEvent) return;
+      const events = entry.messaging || entry.standby || [];
+      events.forEach(webhookEvent => {
+        if (!webhookEvent || !webhookEvent.sender) return;
 
-      const senderPsid = webhookEvent.sender.id;
-      let text = '';
-      let mid = '';
+        const senderPsid = webhookEvent.sender.id;
+        let text = '';
+        let mid = '';
 
-      if (webhookEvent.message) {
-        // Ignorar ecos de mensajes enviados por la propia página o bots
-        if (webhookEvent.message.is_echo) {
+        if (webhookEvent.message) {
+          // Ignorar ecos de mensajes enviados por la propia página o bots
+          if (webhookEvent.message.is_echo) {
+            return;
+          }
+          mid = webhookEvent.message.mid;
+          text = webhookEvent.message.quick_reply?.payload || webhookEvent.message.text || '';
+        } else if (webhookEvent.postback) {
+          mid = 'pb_' + senderPsid + '_' + (webhookEvent.timestamp || Date.now());
+          text = webhookEvent.postback.payload || webhookEvent.postback.title || '';
+        }
+
+        if (isDuplicate(mid)) {
+          console.log(`[Meta Deduplicator] Mensaje duplicado ignorado: ${mid}`);
           return;
         }
-        mid = webhookEvent.message.mid;
-        text = webhookEvent.message.quick_reply?.payload || webhookEvent.message.text || '';
-      } else if (webhookEvent.postback) {
-        mid = 'pb_' + Date.now();
-        text = webhookEvent.postback.payload || webhookEvent.postback.title || '';
-      }
 
-      if (isDuplicate(mid)) {
-        console.log(`[Meta Deduplicator] Mensaje duplicado ignorado: ${mid}`);
-        return;
-      }
-
-      processMetaMessageAsync({
-        senderPsid,
-        text,
-        platform: body.object,
-        senderName: '',
-        mid
-      }).catch(err => {
-        console.error('[Meta Async Processing Error]', err);
+        processMetaMessageAsync({
+          senderPsid,
+          text,
+          platform: body.object,
+          senderName: '',
+          mid
+        }).catch(err => {
+          console.error('[Meta Async Processing Error]', err);
+        });
       });
     });
   }
@@ -147,7 +149,32 @@ async function processMetaMessageAsync({ senderPsid, text, platform, senderName 
     text
   });
 
-  // Verificar si el bot está pausado para este lead
+  // Reanudar automáticamente el bot si el usuario escribe un comando de menú, inicio o respuesta
+  const isControlCommand = (
+    cleanText === '0' ||
+    cleanText === 'menu' ||
+    cleanText === 'menú' ||
+    cleanText === 'inicio' ||
+    cleanText === 'hola' ||
+    cleanText === 'empezar' ||
+    cleanText === 'si' ||
+    cleanText === 'sí' ||
+    cleanText === 'no' ||
+    cleanText === '1' ||
+    cleanText === '2' ||
+    cleanText === '3' ||
+    cleanText === '4'
+  );
+
+  if (isControlCommand && lead && lead.bot_paused) {
+    console.log(`[Meta Bot] Reanudando bot automáticamente para ${senderPsid} por mensaje: "${text}"`);
+    lead.bot_paused = false;
+    if (prisma && lead.id) {
+      await prisma.lead.update({ where: { id: lead.id }, data: { bot_paused: false } }).catch(() => {});
+    }
+  }
+
+  // Verificar si el bot está pausado para este lead (solo si no es un comando de control)
   if (lead && lead.bot_paused) {
     console.log(`[Meta Bot] Bot pausado para el lead #${lead.id || lead.phone_or_id}. Mensaje listo para operador humano.`);
     return;
